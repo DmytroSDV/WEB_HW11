@@ -14,6 +14,20 @@ async def get_users(limit: int = Query(10, ge=10, le=500), offset: int = Query(0
     users = await repository_users.get_users(limit, offset, db)
     return users
 
+@router.get("/birth_date", response_model=list[UserResponse])
+async def get_users_birth(limit: int = Query(7, ge=7, le=100),
+                    db: AsyncSession = Depends(get_db)):
+    users = await repository_users.get_users_birth(limit, db)
+    return users
+
+@router.get("/search_by", response_model=list[UserResponse])
+async def get_users_by(first_name: str = Query(None, min_length=3, description="Frist name search query"), 
+                       second_name: str = Query(None, min_length=3, description="Second name search query"),
+                       email_add: str = Query(None, min_length=3, description="Email search query"),
+                       db: AsyncSession = Depends(get_db)):
+    users = await repository_users.get_users_by(first_name, second_name, email_add, db)
+    return users
+
 
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int = Path(ge=1), db: AsyncSession = Depends(get_db)):
